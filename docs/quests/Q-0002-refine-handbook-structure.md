@@ -6,11 +6,11 @@
 - Status:
   - [x] Draft
   - [ ] In Progress
-  - [x] In Review
-  - [ ] Completed
+  - [ ] In Review
+  - [x] Completed
 - Created date (YYYY-MM-DD): `2026-03-04`
-- Completed date (YYYY-MM-DD): `<date>`
-- Completed timestamp UTC (YYYY-MM-DDTHH:MM:SSZ): `<timestamp>`
+- Completed date (YYYY-MM-DD): `2026-03-04`
+- Completed timestamp UTC (YYYY-MM-DDTHH:MM:SSZ): `2026-03-04T21:23:09Z`
 - Owner (GitHub): `@floherzler`
 
 ## Objective
