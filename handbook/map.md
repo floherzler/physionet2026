@@ -32,7 +32,8 @@ A lightweight roadmap that complements quests by showing direction and sequencin
 
 - `docs/quests/Q-0001-integrate-sleepfm-submodule.md`
 - `docs/quests/Q-0002-refine-handbook-structure.md`
-- `docs/quests/Q-0003-time-aware-multimodal-module.md` (Draft)
+- `docs/quests/Q-0003-kaggle-data-access-and-sampling.md` (In Progress)
+- `docs/quests/side-quests/Q-0103-time-aware-multimodal-module.md` (Draft, parked)
 
 ## Questions to answer
 
