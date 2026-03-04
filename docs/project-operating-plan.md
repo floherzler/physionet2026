@@ -64,6 +64,12 @@ Quick operational reminder:
 - Implement in package code and keep challenge entrypoints stable.
 - Sync dependency surfaces before submission-related changes.
 
+## External Submodule Boundaries
+
+- Q-0001 (`docs/quests/Q-0001-integrate-sleepfm-submodule.md`) integrates SleepFM as a Git submodule at `external/sleepfm-clinical`.
+- Integration mode for Q-0001 is **offline-only embeddings preparation**.
+- Challenge runtime entrypoints (`train_model.py`, `run_model.py`, `evaluate_model.py`, `team_code.py`) must not directly invoke SleepFM in this quest.
+
 ## Team Collaboration Rules (3 people)
 
 - Each quest has one primary implementer and at least one reviewer.

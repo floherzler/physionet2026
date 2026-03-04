@@ -1,0 +1,3 @@
+[submodule "external/sleepfm-clinical"]
+	path = external/sleepfm-clinical
+	url = https://github.com/zou-group/sleepfm-clinical

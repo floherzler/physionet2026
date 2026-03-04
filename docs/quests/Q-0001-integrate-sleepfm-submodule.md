@@ -4,13 +4,13 @@
 
 - Quest ID: `Q-0001`
 - Status:
-  - [x] Draft
+  - [ ] Draft
   - [ ] In Progress
   - [ ] In Review
-  - [ ] Completed
+  - [x] Completed
 - Created date (YYYY-MM-DD): `2026-03-04`
-- Completed date (YYYY-MM-DD): `<date>`
-- Completed timestamp UTC (YYYY-MM-DDTHH:MM:SSZ): `<timestamp>`
+- Completed date (YYYY-MM-DD): `2026-03-04`
+- Completed timestamp UTC (YYYY-MM-DDTHH:MM:SSZ): `2026-03-04T21:19:27Z`
 - Owner (GitHub): `@floherzler`
 
 ## Objective
@@ -39,18 +39,18 @@ Add SleepFM as an external Git submodule and document a challenge-safe integrati
 
 ## Acceptance Criteria
 
-- [ ] SleepFM submodule exists at `external/sleepfm-clinical` and is pinned to commit `70ce04e6f6c656f46a4857fff74ce04a0a00e5da`.
-- [ ] `.gitmodules` contains the SleepFM source URL and path.
-- [ ] `docs/project-operating-plan.md` includes explicit offline-only integration boundary for this quest.
-- [ ] `docs/requirements-overview.md` remains compliant with dependency policy (`uv` local workflow, `requirements.txt` challenge runtime).
-- [ ] Quest metadata and status are updated for handoff (`In Review` or `Completed`) with evidence.
+- [x] SleepFM submodule exists at `external/sleepfm-clinical` and is pinned to commit `70ce04e6f6c656f46a4857fff74ce04a0a00e5da`.
+- [x] `.gitmodules` contains the SleepFM source URL and path.
+- [x] `docs/project-operating-plan.md` includes explicit offline-only integration boundary for this quest.
+- [x] `docs/requirements-overview.md` remains compliant with dependency policy (`uv` local workflow, `requirements.txt` challenge runtime).
+- [x] Quest metadata and status are updated for handoff (`In Review` or `Completed`) with evidence.
 
 ## Implementation Tasks
 
-- [ ] Add submodule: `external/sleepfm-clinical` from `https://github.com/zou-group/sleepfm-clinical`.
-- [ ] Pin submodule to commit `70ce04e6f6c656f46a4857fff74ce04a0a00e5da`.
-- [ ] Add documentation note to `docs/project-operating-plan.md` clarifying offline-only mode in this quest.
-- [ ] Link this quest from PR description and keep updates in this file.
+- [x] Add submodule: `external/sleepfm-clinical` from `https://github.com/zou-group/sleepfm-clinical`.
+- [x] Pin submodule to commit `70ce04e6f6c656f46a4857fff74ce04a0a00e5da`.
+- [x] Add documentation note to `docs/project-operating-plan.md` clarifying offline-only mode in this quest.
+- [x] Link this quest from PR description and keep updates in this file. (N/A for this change set; user requested direct commit to `main`.)
 
 ## Validation
 
@@ -59,9 +59,12 @@ Add SleepFM as an external Git submodule and document a challenge-safe integrati
   - `git config -f .gitmodules --get-regexp "submodule\\..*\\.(path|url)"`
   - `rg -n "sleepfm|submodule|external/sleepfm-clinical" docs README.md`
 - Evidence:
-  - Submodule appears in `.gitmodules` and under `external/sleepfm-clinical` at pinned hash.
-  - Docs clearly describe offline-only approach for this quest.
-  - Quest file reflects status and completion metadata when done.
+  - `git submodule status` reports `70ce04e6f6c656f46a4857fff74ce04a0a00e5da external/sleepfm-clinical`.
+  - `.gitmodules` contains:
+    - `submodule.external/sleepfm-clinical.path external/sleepfm-clinical`
+    - `submodule.external/sleepfm-clinical.url https://github.com/zou-group/sleepfm-clinical`
+  - `docs/project-operating-plan.md` now includes `External Submodule Boundaries` with offline-only and no-runtime-invocation rules for Q-0001.
+  - Quest status updated to `Completed`; PR-link task marked N/A because this was committed directly to `main` per user instruction.
 
 ## Risks / Open Questions
 
