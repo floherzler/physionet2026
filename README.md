@@ -1,5 +1,52 @@
 # Python example code for the George B. Moody PhysioNet Challenge 2026
 
+## Team and Agent Onboarding (Read First)
+
+This fork uses a document-driven workflow with a strict split between challenge runtime code and planning docs.
+
+### Core repository structure
+
+```text
+.
+├── train_model.py            # challenge entrypoint (do not change contract)
+├── run_model.py              # challenge entrypoint (do not change contract)
+├── evaluate_model.py         # challenge evaluation script
+├── helper_code.py            # challenge helper script
+├── team_code.py              # required team API surface used by challenge scripts
+├── requirements.txt          # submission/runtime dependency surface (Docker uses this)
+├── docs/                     # implementation-critical planning + workflow docs
+│   ├── project-operating-plan.md
+│   ├── requirements-overview.md
+│   ├── templates/
+│   │   └── quest-template.md
+│   ├── best-practices/
+│   │   ├── ai-agent-task-workflow.md
+│   │   └── quest-creation-best-practices.md
+│   └── quests/
+│       ├── README.md
+│       ├── Q-0001-baseline-training.md
+│       └── Q-0002-data-ingestion.md
+└── handbook/                 # optional human-first context (lore, guild charter, roadmap)
+```
+
+### Rule for spawned agents
+
+- New implementation planning must go in `docs/quests/`.
+- Create quest files from `docs/templates/quest-template.md`.
+- Do not start coding before a linked quest exists.
+- Use sequential quest IDs in filenames, e.g. `Q-0001-<slug>.md`.
+
+### Dependency and training workflow policy
+
+- Local development can use `uv` with `pyproject.toml` + `uv.lock`.
+- Submission runtime must remain compatible with `requirements.txt` and the root Docker flow.
+- Keep Lightning/Lightning CLI orchestration in package code and call it through `team_code.py` wrappers.
+
+Primary references:
+- `docs/project-operating-plan.md`
+- `docs/requirements-overview.md`
+- `docs/best-practices/ai-agent-task-workflow.md`
+
 ## What's in this repository?
 
 This repository contains a simple example that illustrates how to format a Python entry for the [George B. Moody PhysioNet Challenge 2026](https://physionetchallenges.org/2026/). If you are participating in the 2026 Challenge, then we recommend using this repository as a template for your entry. You can remove some of the code, reuse other code, and add new code to create your entry. You do not need to use the models, features, and/or libraries in this example for your entry. We encourage a diversity of approaches to the Challenges.
