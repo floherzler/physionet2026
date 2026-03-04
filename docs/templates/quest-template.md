@@ -11,7 +11,7 @@
 - Created date (YYYY-MM-DD): `<date>`
 - Completed date (YYYY-MM-DD): `<date>`
 - Completed timestamp UTC (YYYY-MM-DDTHH:MM:SSZ): `<timestamp>`
-- Owner: `<name>`
+- Owner (GitHub): `@<handle>`
 
 ## Objective
 
@@ -21,10 +21,6 @@
 
 - <in scope task 1>
 - <in scope task 2>
-
-## Out of Scope
-
-- <out of scope task 1>
 
 ## Acceptance Criteria
 
@@ -38,11 +34,7 @@
 
 ## Validation
 
-- Commands:
-  - `<command 1>`
-  - `<command 2>`
-- Evidence:
-  - <what proves this works>
+<Short validation note or commands. Keep this section minimal unless needed.>
 
 ## Risks / Open Questions
 

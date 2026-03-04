@@ -18,6 +18,7 @@ Use this guide to keep quest docs lightweight, actionable, and traceable in Git.
 - Use concrete acceptance criteria that can be validated.
 - Include checkbox task lists so agents can mark progress.
 - Record assumptions and risks explicitly.
+- Prefer minimal quests: include only what is necessary for handoff.
 
 ## Completion and History Rules
 
@@ -26,17 +27,27 @@ Use this guide to keep quest docs lightweight, actionable, and traceable in Git.
 - Fill both:
   - completion date (`YYYY-MM-DD`)
   - completion timestamp in UTC (`YYYY-MM-DDTHH:MM:SSZ`)
+- Completed quests are immutable by default:
+  - do not implement them again unless explicitly reopened.
 
 ## Minimal Required Sections
 
 - Quest Metadata
 - Objective
-- Scope / Out of Scope
+- Scope
 - Acceptance Criteria (checkboxes)
 - Implementation Tasks (checkboxes)
 - Validation
 - Risks / Open Questions
 - Links
+
+Optional sections:
+- Add extra detail only when ambiguity would otherwise block implementation.
+
+## Iteration Policy
+
+- Use incrementing quest numbers for new work, even if related to prior quests.
+- If additional work is needed after completion, create a new quest (e.g. `Q-0012-followup-...`) instead of silently extending old scope.
 
 ## Cross-References
 

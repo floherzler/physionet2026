@@ -52,54 +52,17 @@ Recommended naming:
 5. Record validation evidence in the quest doc before merge.
 6. Set completion fields (date and timestamp) when done.
 
-## Challenge-Safe Architecture
+## Policy Source of Truth
 
-- Keep these files as challenge-facing wrappers:
-  - `train_model.py`
-  - `run_model.py`
-  - `evaluate_model.py`
-  - `helper_code.py`
-- Keep required function signatures in `team_code.py` unchanged.
-- Implement most logic in `src/physionet2026/` and call it from `team_code.py`.
+For mandatory constraints and technical policy, use [requirements-overview.md](./requirements-overview.md) as the canonical source. This includes:
 
-## `uv` + Submission Compromise
+- Challenge-safe wrapper boundaries.
+- `uv` local workflow + `requirements.txt` runtime policy.
+- Lightning-first training policy.
 
-Use dual dependency surfaces:
-
-- Local development source of truth:
-  - `pyproject.toml`
-  - `uv.lock`
-- Submission/runtime source of truth:
-  - `requirements.txt` (installed by Docker build)
-
-Rules:
-
-1. Add or update dependencies in `pyproject.toml`.
-2. Lock locally with `uv`.
-3. Export/refresh `requirements.txt` from the locked environment before submission.
-4. Ensure Docker install succeeds with only `requirements.txt`.
-
-Suggested command sequence:
-
-```bash
-uv sync
-uv lock
-uv export --format requirements-txt --no-hashes --output-file requirements.txt
-python train_model.py -d <data> -m <model> -v
-python run_model.py -d <data> -m <model> -o <outputs> -v
-```
-
-This gives fast local iteration with `uv` while preserving challenge compatibility.
-
-## Lightning-First With Challenge Compatibility
-
-- Use PyTorch Lightning + Lightning CLI for training orchestration.
-- Keep challenge entrypoints minimal:
-  - `team_code.train_model(...)` calls package training adapter.
-  - `team_code.load_model(...)` loads serialized inference bundle.
-  - `team_code.run_model(...)` performs record-level inference.
-- Avoid invoking Lightning CLI directly from challenge wrappers in a way that breaks required arguments.
-- Keep a CPU-safe default training path for challenge runtime constraints.
+Quick operational reminder:
+- Implement in package code and keep challenge entrypoints stable.
+- Sync dependency surfaces before submission-related changes.
 
 ## Team Collaboration Rules (3 people)
 

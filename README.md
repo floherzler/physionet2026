@@ -35,6 +35,7 @@ This fork uses a document-driven workflow with a strict split between challenge 
 - Create quest files from `docs/templates/quest-template.md`.
 - Do not start coding before a linked quest exists.
 - Use sequential quest IDs in filenames, e.g. `Q-0001-<slug>.md`.
+- Do not re-implement completed quests unless explicitly reopened; create a new incremented quest for follow-up work.
 
 ### Dependency and training workflow policy
 
@@ -46,6 +47,8 @@ Primary references:
 - `docs/project-operating-plan.md`
 - `docs/requirements-overview.md`
 - `docs/best-practices/ai-agent-task-workflow.md`
+
+The AI workflow file includes both Planning Mode and Implementation Mode, plus a copy/paste handoff prompt for starting a fresh implementation chat.
 
 ## What's in this repository?
 
