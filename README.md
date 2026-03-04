@@ -64,6 +64,65 @@ Second, you can install the dependencies for these scripts by creating a Docker 
 
     pip install -r requirements.txt
 
+### UV workflow (main repo + SleepFM offline extraction)
+
+For local development, use a dedicated `uv` environment for offline SleepFM extraction so challenge runtime dependencies remain unchanged.
+
+For a fresh-clone reproducible setup (including Kaggle auth + deterministic 10-file sample download), use:
+
+- `docs/local-dev-bootstrap.md`
+
+```bash
+# 0) From repo root
+cd /home/flo178/projects/physionet2026
+
+# 1) Create and activate a Python 3.10 uv environment
+uv venv .venv-sleepfm --python 3.10
+source .venv-sleepfm/bin/activate
+
+# 2) Install main repo dependencies (challenge/runtime surface)
+uv pip install -r requirements.txt
+
+# 3) Install SleepFM extraction dependencies (offline precompute only)
+uv pip install -r external/sleepfm-clinical/requirements.txt
+```
+
+If `torch` installation needs an explicit index, use:
+
+```bash
+uv pip install torch==2.0.1 torchvision==0.15.2 --index-url https://download.pytorch.org/whl/cpu
+```
+
+Run offline embedding extraction from repo root:
+
+```bash
+python scripts/extract_sleepfm_embeddings.py \
+  --data-folder data/challenge2026_training10/training_set \
+  --output-folder artifacts/sleepfm_cache \
+  --sleepfm-root external/sleepfm-clinical \
+  --manifest artifacts/sleepfm_cache/manifest.csv \
+  --seed 420 \
+  --limit 10
+```
+
+Quick manifest validation:
+
+```bash
+python - <<'PY'
+import pandas as pd
+df = pd.read_csv("artifacts/sleepfm_cache/manifest.csv")
+print(df[["cache_key", "status"]].head(20))
+print(df["status"].value_counts(dropna=False))
+print("rows", len(df), "unique_keys", df["cache_key"].nunique())
+PY
+```
+
+Expected local test outcome:
+
+- At least one `status=ok` row when all dependencies are installed and compatible channels are present.
+- `status=missing_input` rows are normal when only a subset of EDF files is downloaded.
+- SleepFM remains offline-only in this workflow (precompute step), not in challenge runtime entrypoints.
+
 You can train your model by running
 
     python train_model.py -d training_data -m model

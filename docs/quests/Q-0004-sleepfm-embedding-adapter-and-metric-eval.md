@@ -5,12 +5,12 @@
 - Quest ID: `Q-0004`
 - Status:
   - [ ] Draft
-  - [x] In Progress
+  - [ ] In Progress
   - [ ] In Review
-  - [ ] Completed
+  - [x] Completed
 - Created date (YYYY-MM-DD): `2026-03-04`
-- Completed date (YYYY-MM-DD): `<date>`
-- Completed timestamp UTC (YYYY-MM-DDTHH:MM:SSZ): `<timestamp>`
+- Completed date (YYYY-MM-DD): `2026-03-04`
+- Completed timestamp UTC (YYYY-MM-DDTHH:MM:SSZ): `2026-03-04T23:57:42Z`
 - Owner (GitHub): `@floherzler`
 
 ## Objective
@@ -65,20 +65,20 @@ Manifest schema (locked):
 
 ## Acceptance Criteria
 
-- [ ] Cache key format is fixed and documented as session-safe: `<SiteID>/<BidsFolder>/ses-<SessionID>`.
-- [ ] Cache artifact format is fixed and documented as HDF5 (`embeddings.h5`) + JSON sidecar (`meta.json`) + manifest row.
-- [ ] A scriptable adapter extracts embeddings for sampled EDF files and writes deterministic cache artifacts.
-- [ ] `scripts/extract_sleepfm_embeddings.py` is implemented and callable from repository root.
-- [ ] A manifest file is produced that matches the locked schema in this quest.
-- [ ] Documentation explicitly states offline-only mode: SleepFM runs only in precompute step, never inside challenge runtime entrypoints (`train_model.py`, `run_model.py`, `team_code.py` runtime path).
+- [x] Cache key format is fixed and documented as session-safe: `<SiteID>/<BidsFolder>/ses-<SessionID>`.
+- [x] Cache artifact format is fixed and documented as HDF5 (`embeddings.h5`) + JSON sidecar (`meta.json`) + manifest row.
+- [x] A scriptable adapter extracts embeddings for sampled EDF files and writes deterministic cache artifacts.
+- [x] `scripts/extract_sleepfm_embeddings.py` is implemented and callable from repository root.
+- [x] A manifest file is produced that matches the locked schema in this quest.
+- [x] Documentation explicitly states offline-only mode: SleepFM runs only in precompute step, never inside challenge runtime entrypoints (`train_model.py`, `run_model.py`, `team_code.py` runtime path).
 
 ## Implementation Tasks
 
-- [ ] Define canonical cache contract in this quest doc (ID mapping, on-disk layout, file suffixes, manifest schema).
-- [ ] Implement `scripts/extract_sleepfm_embeddings.py` for sampled EDF extraction.
-- [ ] Persist extraction metadata, including SleepFM commit pin and adapter version.
-- [ ] Add failure status handling in manifest for records that cannot be embedded.
-- [ ] Run extraction validation and record concrete command evidence.
+- [x] Define canonical cache contract in this quest doc (ID mapping, on-disk layout, file suffixes, manifest schema).
+- [x] Implement `scripts/extract_sleepfm_embeddings.py` for sampled EDF extraction.
+- [x] Persist extraction metadata, including SleepFM commit pin and adapter version.
+- [x] Add failure status handling in manifest for records that cannot be embedded.
+- [x] Run extraction validation and record concrete command evidence.
 
 ## Validation
 
@@ -97,6 +97,26 @@ python scripts/extract_sleepfm_embeddings.py \
 python -c "import pandas as pd; df=pd.read_csv('artifacts/sleepfm_cache/manifest.csv'); print(df[['cache_key','status']].head()); print('rows=', len(df)); print('unique_keys=', df['cache_key'].nunique())"
 ```
 
+Observed evidence (2026-03-05):
+
+- Extraction command run:
+  - `python scripts/extract_sleepfm_embeddings.py --data-folder data/challenge2026_training10/training_set --output-folder artifacts/sleepfm_cache --sleepfm-root external/sleepfm-clinical --manifest artifacts/sleepfm_cache/manifest.csv --seed 420`
+- Script output:
+  - `rows=622 unique_cache_keys=622`
+  - `status_counts={'missing_input': 612, 'inference_error': 10}`
+- Manifest validation run:
+  - `python -c "import pandas as pd; df=pd.read_csv('artifacts/sleepfm_cache/manifest.csv'); print(df[['cache_key','status']].head()); print('rows=', len(df)); print('unique_keys=', df['cache_key'].nunique())"`
+- Manifest schema columns match locked contract:
+  - `site_id,bids_folder,session_id,cache_key,cache_path,meta_path,sleepfm_commit,adapter_version,status,error_message,num_windows,embedding_dim,created_utc`
+- Failure status handling verified:
+  - `missing_input` rows present for demographics entries without downloaded EDF files.
+  - `inference_error` rows present for local EDFs due missing local `torch` dependency in current environment.
+- Post-install extraction validation on downloaded 10-file sample:
+  - `.venv-sleepfm/bin/python scripts/extract_sleepfm_embeddings.py --data-folder data/challenge2026_training10/training_set --output-folder artifacts/sleepfm_cache --sleepfm-root external/sleepfm-clinical --manifest artifacts/sleepfm_cache/manifest.csv --seed 420 --limit 10`
+  - `rows=10 unique_cache_keys=10`
+  - `status_counts={'ok': 10}`
+  - Per-session artifacts confirmed for `ok` rows: `embeddings.h5` + `meta.json`.
+
 Expected evidence:
 
 - Embedding cache files created under the session-safe directory layout.
@@ -112,7 +132,7 @@ Expected evidence:
 
 ## Implementation Readiness
 
-- This quest is now fully specified for implementation and marked `In Progress`.
+- Quest implementation is complete.
 - Any scope beyond cache extraction/contract (model consumption or evaluation protocol) belongs to Q-0005 and Q-0006.
 
 ## Links
