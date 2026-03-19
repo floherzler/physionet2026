@@ -348,7 +348,7 @@ def update_demographics_table(input_file, output_folder, results_dict):
     for record_id, (label, prob) in results_dict.items():
         # Match by 'BidsFolder'
         mask = df[id_folder] == record_id
-        df.loc[mask, id_bin] = label
+        df.loc[mask, id_bin] = bool(label)
         df.loc[mask, id_prob] = prob
     
     # Save to file

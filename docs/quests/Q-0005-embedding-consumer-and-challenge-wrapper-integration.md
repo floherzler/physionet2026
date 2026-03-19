@@ -17,6 +17,11 @@
 
 Integrate precomputed SleepFM embeddings into challenge-compatible `train_model.py` and `run_model.py` flows via `team_code.py`, without invoking SleepFM during runtime.
 
+Superseded note:
+
+- This draft is superseded by `docs/quests/Q-0008-sleepfm-lstm-baseline.md` for the first submission-safe SleepFM baseline.
+- Keep this file for history, but do not implement it as the primary path unless it is explicitly reopened.
+
 ## Scope
 
 - Consume embedding cache artifacts produced by Q-0004.

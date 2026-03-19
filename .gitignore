@@ -1,3 +1,31 @@
 # Local datasets and derived artifacts
 data/
 artifacts/
+
+# Python cache and build outputs
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+.venv-*/
+venv/
+
+# Notebook/editor noise
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+
+# Local training and inference scratch space
+model/
+model_*/
+models/
+outputs/
+outputs_*/
+
+# Local logs
+*.log
