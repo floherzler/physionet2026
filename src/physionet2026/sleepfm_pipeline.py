@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from scipy.signal import resample_poly
+from tqdm import tqdm
 
 from .vendor_sleepfm import SetTransformer
 
@@ -155,6 +156,7 @@ def extract_sequence_embeddings(
     repo_root: Path,
     bundle: SleepFMBundle,
     batch_windows: int = 128,
+    verbose: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, dict[str, object]]:
     import torch
 
@@ -176,7 +178,15 @@ def extract_sequence_embeddings(
             windows = standardized.reshape(standardized.shape[0], TOTAL_TOKENS, TOKEN_SAMPLES)
             windows = np.transpose(windows, (1, 0, 2))
             outputs = []
-            for start in range(0, TOTAL_TOKENS, batch_windows):
+            window_starts = range(0, TOTAL_TOKENS, batch_windows)
+            batch_iter = tqdm(
+                window_starts,
+                total=(TOTAL_TOKENS + batch_windows - 1) // batch_windows,
+                desc=f"SleepFM {edf_path.stem} {modality}",
+                leave=False,
+                disable=not verbose,
+            )
+            for start in batch_iter:
                 batch = windows[start : start + batch_windows]
                 x = torch.from_numpy(batch).float().to(bundle.device)
                 mask = torch.zeros((x.shape[0], x.shape[1]), dtype=torch.bool, device=bundle.device)

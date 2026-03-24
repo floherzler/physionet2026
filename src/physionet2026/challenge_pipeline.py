@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 from helper_code import HEADERS, load_age, load_demographics, load_label, load_sex
 
@@ -119,6 +120,7 @@ def ensure_sequence_cache(
     row: dict[str, object],
     bundle,
     config: BaselineConfig,
+    verbose: bool = False,
 ) -> tuple[Path, dict[str, object]]:
     site_id = str(row[HEADERS["site_id"]]).strip()
     bids_folder = str(row[HEADERS["bids_folder"]]).strip()
@@ -134,6 +136,7 @@ def ensure_sequence_cache(
             repo_root=repo_root,
             bundle=bundle,
             batch_windows=config.sleepfm_batch_windows,
+            verbose=verbose,
         )
         metadata.update(
             {
@@ -255,7 +258,7 @@ def evaluate_model(model, loader, demo_stats: DemographicStats | None, device) -
     return float(np.mean(losses)) if losses else 0.0
 
 
-def train_downstream_model(records: list[dict[str, object]], config: BaselineConfig):
+def train_downstream_model(records: list[dict[str, object]], config: BaselineConfig, verbose: bool = False):
     import torch
     from torch.utils.data import DataLoader
 
@@ -287,9 +290,20 @@ def train_downstream_model(records: list[dict[str, object]], config: BaselineCon
     best_state = None
     best_loss = float("inf")
     patience_left = config.patience
-    for _ in range(config.epochs):
+    epoch_iter = tqdm(
+        range(config.epochs),
+        desc="Training epochs",
+        disable=not verbose,
+    )
+    for epoch_idx in epoch_iter:
         model.train()
-        for batch in train_loader:
+        batch_iter = tqdm(
+            train_loader,
+            desc=f"Epoch {epoch_idx + 1}/{config.epochs}",
+            leave=False,
+            disable=not verbose,
+        )
+        for batch in batch_iter:
             embeddings = batch["embeddings"].to(device)
             mask = batch["mask"].to(device)
             labels = batch["label"].to(device)
@@ -301,8 +315,12 @@ def train_downstream_model(records: list[dict[str, object]], config: BaselineCon
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            if verbose:
+                batch_iter.set_postfix(loss=f"{loss.item():.4f}")
 
         current_loss = evaluate_model(model, val_loader, demo_stats, device) if val_loader is not None else 0.0
+        if verbose:
+            epoch_iter.set_postfix(val_loss=f"{current_loss:.4f}")
         if current_loss <= best_loss:
             best_loss = current_loss
             best_state = {key: value.detach().cpu() for key, value in model.state_dict().items()}
@@ -344,10 +362,17 @@ def train_challenge_model(data_folder: str, model_folder: str, verbose: bool) ->
 
     records = []
     skipped = 0
-    for row in labeled_session_rows(data_root):
+    session_iter = tqdm(
+        labeled_session_rows(data_root),
+        desc="Preparing sessions",
+        disable=not verbose,
+    )
+    for row in session_iter:
         try:
-            _, record = ensure_sequence_cache(repo_root, data_root, cache_root, row, bundle, config)
+            _, record = ensure_sequence_cache(repo_root, data_root, cache_root, row, bundle, config, verbose=verbose)
             records.append(record)
+            if verbose:
+                session_iter.set_postfix(session=row.get(HEADERS["bids_folder"], "unknown"))
         except (FileNotFoundError, MissingSignalError) as exc:
             skipped += 1
             if verbose:
@@ -357,7 +382,7 @@ def train_challenge_model(data_folder: str, model_folder: str, verbose: bool) ->
         raise RuntimeError("No training sessions with usable SleepFM-compatible channels were found.")
 
     write_cache_manifest(cache_root, records)
-    model, demo_stats = train_downstream_model(records, config)
+    model, demo_stats = train_downstream_model(records, config, verbose=verbose)
     save_training_artifacts(model_root, model, demo_stats, config)
     if verbose:
         print(f"trained_records={len(records)} skipped_records={skipped} variant={config.variant}")

@@ -293,12 +293,26 @@ def load_edf_to_nparrays(edf_path: str) -> Tuple[Dict[str, np.ndarray], Dict[str
     return channel_dict, fs_dict
 
 # Extracts a list of unique patient identifiers (BIDS folder names) from the metadata CSV
+def resolve_metadata_csv_path(patient_data_file):
+    """
+    Resolve demographics.csv from either the provided folder layout or its parent.
+    """
+    if os.path.isfile(patient_data_file):
+        return patient_data_file
+
+    candidate = os.path.join(os.path.dirname(os.path.dirname(patient_data_file)), os.path.basename(patient_data_file))
+    if os.path.isfile(candidate):
+        return candidate
+
+    raise FileNotFoundError(f"Could not find demographics CSV at {patient_data_file} or {candidate}")
+
+
 def find_patients(patient_data_file):
     """
     Returns a list of dictionaries, each containing the identifiers 
     needed to locate specific physiological files.
     """
-    df = pd.read_csv(patient_data_file)
+    df = pd.read_csv(resolve_metadata_csv_path(patient_data_file))
     # Get the unique combinations of patient, site, and session
     cols = [HEADERS['bids_folder'], HEADERS['site_id'], HEADERS['session_id']]
     patient_info = df[cols].drop_duplicates()
